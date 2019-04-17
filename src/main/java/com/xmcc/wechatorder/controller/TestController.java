@@ -1,6 +1,5 @@
-package com.xmcc.wechatorder.Controller;
+package com.xmcc.wechatorder.controller;
 
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
