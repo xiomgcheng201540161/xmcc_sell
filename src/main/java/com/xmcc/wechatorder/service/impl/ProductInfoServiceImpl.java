@@ -1,5 +1,6 @@
 package com.xmcc.wechatorder.service.impl;
 
+import com.xmcc.wechatorder.common.ProductEnums;
 import com.xmcc.wechatorder.common.ResultEnums;
 import com.xmcc.wechatorder.common.ResultResponse;
 import com.xmcc.wechatorder.dto.ProductCategoryDto;
@@ -9,11 +10,13 @@ import com.xmcc.wechatorder.entity.Productinfo;
 import com.xmcc.wechatorder.repository.ProductCategoryRepository;
 import com.xmcc.wechatorder.repository.ProductInfoRepository;
 import com.xmcc.wechatorder.service.ProductInfoService;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 @Service
 public class ProductInfoServiceImpl implements ProductInfoService {
@@ -51,7 +54,31 @@ public class ProductInfoServiceImpl implements ProductInfoService {
         /*categoryDtoList.stream().forEach(System.out::println);*/
         return ResultResponse.success(categoryDtoList);
 
+    }
 
+    /**
+     * 根据id查询出商品详情
+     * @param productId
+     * @return
+     */
+    @Override
+    public ResultResponse<Productinfo> queryById(String productId) {
+        if(StringUtils.isBlank(productId)){
+            return ResultResponse.fail(ResultEnums.PARAM_ERROR.getMsg());
+        }
+        Optional<Productinfo> id = infoRepository.findById(productId);
+        if(!id.isPresent()){            //如果查询出来的商品信息不为空
+            return ResultResponse.fail(ResultEnums.NOT_EXITS.getMsg());
+        }
+        Productinfo productinfo = id.get();
+        if(productinfo.getProductStatus()==(ResultEnums.PRODUCT_DOWN.getCode())){       //判断商品状态是否下架
+            return ResultResponse.fail(ResultEnums.PRODUCT_DOWN.getMsg());
+        }
+        return ResultResponse.success(productinfo);
+    }
 
+    @Override
+    public void updateProduct(Productinfo productinfo) {
+        infoRepository.save(productinfo);
     }
 }
