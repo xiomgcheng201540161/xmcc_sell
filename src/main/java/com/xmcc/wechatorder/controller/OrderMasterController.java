@@ -1,6 +1,8 @@
 package com.xmcc.wechatorder.controller;
 
 import com.google.common.collect.Maps;
+import com.xmcc.wechatorder.bean.OrderBean;
+import com.xmcc.wechatorder.bean.Pagebean;
 import com.xmcc.wechatorder.common.ResultResponse;
 import com.xmcc.wechatorder.dto.OrderMasterDto;
 import com.xmcc.wechatorder.service.OrderMasterService;
@@ -37,5 +39,49 @@ public class OrderMasterController {
             map.put("参数校验错误", JsonUtil.object2string(collect));
         }
         return orderMasterService.insertOrder(orderMasterDto);
+    }
+
+
+
+    @PostMapping("list")
+    @ApiOperation(value = "订单列表",httpMethod = "POST" ,response = ResultResponse.class)
+    public ResultResponse list(@Valid  @ApiParam(name="查询条件",value = "传入json格式",required = true) Pagebean pagebean,
+                                BindingResult bindingResult){
+        HashMap<String, String> map = Maps.newHashMap();
+        if(bindingResult.hasErrors()){
+            List<String> collect = bindingResult.getFieldErrors().
+                    stream().map(err -> err.getDefaultMessage()).collect(Collectors.toList());
+            map.put("参数校验错误", JsonUtil.object2string(collect));
+        }
+        return orderMasterService.orderMasterList(pagebean);
+    }
+
+
+
+    @PostMapping("detail")
+    @ApiOperation(value = "订单详情",httpMethod = "POST" ,response = ResultResponse.class)
+    public ResultResponse list(@Valid  @ApiParam(name="查询订单详情条件",value = "传入json格式",required = true)OrderBean orderBean,
+                               BindingResult bindingResult){
+        HashMap<String, String> map = Maps.newHashMap();
+        if(bindingResult.hasErrors()){
+            List<String> collect = bindingResult.getFieldErrors().
+                    stream().map(err -> err.getDefaultMessage()).collect(Collectors.toList());
+            map.put("参数校验错误", JsonUtil.object2string(collect));
+        }
+        return orderMasterService.orderParticulars(orderBean);
+    }
+
+
+    @PostMapping("cancel")
+    @ApiOperation(value = "取消订单",httpMethod = "POST" ,response = ResultResponse.class)
+    public ResultResponse cancel(@Valid  @ApiParam(name="取消订单",value = "传入json格式",required = true)OrderBean orderBean,
+                               BindingResult bindingResult){
+        HashMap<String, String> map = Maps.newHashMap();
+        if(bindingResult.hasErrors()){
+            List<String> collect = bindingResult.getFieldErrors().
+                    stream().map(err -> err.getDefaultMessage()).collect(Collectors.toList());
+            map.put("参数校验错误", JsonUtil.object2string(collect));
+        }
+        return orderMasterService.cancel(orderBean);
     }
 }
